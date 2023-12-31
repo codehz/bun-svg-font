@@ -33,8 +33,8 @@ export function getGeneratedFont({
   const font = new Font({
     familyName: name,
     unitsPerEm: (size - padding * 2) * scale,
-    ascender: (size - padding) * scale,
-    descender: -padding * scale,
+    ascender: (size - padding * 2) * scale,
+    descender: 0,
     glyphs: [
       notdefGlyph,
       ...definitions.map((item) => {
