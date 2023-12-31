@@ -1,58 +1,10 @@
 import { Font, Glyph, Path, type FontConstructorOptions } from "opentype.js";
 import arcToBezier from "svg-arc-to-cubic-bezier";
 import { makeAbsolute, parseSVG } from "svg-path-parser";
-import { get_defnitions } from "./internal/db";
+import { get_defnitions, reset_database } from "./internal/db";
 
-class PathBuilder {
-  path = new Path();
-  constructor(
-    public size: number,
-    public scale: number,
-    public padding: number
-  ) {}
-  moveTo(x: number, y: number) {
-    this.path.moveTo(
-      (x - this.padding) * this.scale,
-      (this.size - y - this.padding) * this.scale
-    );
-  }
-  lineTo(x: number, y: number) {
-    this.path.lineTo(
-      (x - this.padding) * this.scale,
-      (this.size - y - this.padding) * this.scale
-    );
-  }
-  curveTo(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    x: number,
-    y: number
-  ) {
-    this.path.curveTo(
-      (x1 - this.padding) * this.scale,
-      (this.size - y1 - this.padding) * this.scale,
-      (x2 - this.padding) * this.scale,
-      (this.size - y2 - this.padding) * this.scale,
-      (x - this.padding) * this.scale,
-      (this.size - y - this.padding) * this.scale
-    );
-  }
-  quadTo(x1: number, y1: number, x: number, y: number) {
-    this.path.quadraticCurveTo(
-      (x1 - this.padding) * this.scale,
-      (this.size - y1 - this.padding) * this.scale,
-      (x - this.padding) * this.scale,
-      (this.size - y - this.padding) * this.scale
-    );
-  }
-  close() {
-    this.path.close();
-  }
-  generate() {
-    return this.path;
-  }
+export function resetFontCache() {
+  reset_database.run();
 }
 
 export function getGeneratedFont({
@@ -174,10 +126,62 @@ export function getGeneratedFont({
     ],
     styleName: "Regular",
   });
-  font.substitution
+  font.substitution;
   return font;
 }
 
 function mirrorPoint(x0: number, y0: number, x1: number, y1: number) {
   return { x: x0 - (x1 - x0), y: y0 - (y1 - y0) };
+}
+
+class PathBuilder {
+  path = new Path();
+  constructor(
+    public size: number,
+    public scale: number,
+    public padding: number
+  ) {}
+  moveTo(x: number, y: number) {
+    this.path.moveTo(
+      (x - this.padding) * this.scale,
+      (this.size - y - this.padding) * this.scale
+    );
+  }
+  lineTo(x: number, y: number) {
+    this.path.lineTo(
+      (x - this.padding) * this.scale,
+      (this.size - y - this.padding) * this.scale
+    );
+  }
+  curveTo(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    x: number,
+    y: number
+  ) {
+    this.path.curveTo(
+      (x1 - this.padding) * this.scale,
+      (this.size - y1 - this.padding) * this.scale,
+      (x2 - this.padding) * this.scale,
+      (this.size - y2 - this.padding) * this.scale,
+      (x - this.padding) * this.scale,
+      (this.size - y - this.padding) * this.scale
+    );
+  }
+  quadTo(x1: number, y1: number, x: number, y: number) {
+    this.path.quadraticCurveTo(
+      (x1 - this.padding) * this.scale,
+      (this.size - y1 - this.padding) * this.scale,
+      (x - this.padding) * this.scale,
+      (this.size - y - this.padding) * this.scale
+    );
+  }
+  close() {
+    this.path.close();
+  }
+  generate() {
+    return this.path;
+  }
 }
